@@ -1,7 +1,11 @@
 from __future__ import unicode_literals
 
+from datetime import timedelta
+
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+
 
 # Create your models here.
 class Service(models.Model):
@@ -12,7 +16,7 @@ class Service(models.Model):
 
 
 class Invoice(models.Model):
-    invoice_number = models.PositiveIntegerField('Invoice', editable=False, null=False)
+    invoice_number = models.CharField('Invoice', max_length=25, editable=False, null=False)
     place = models.CharField('Place', max_length=100)
     issued = models.DateField('Issued')
     due_date = models.DateField('Due date', null=True, editable=False)
@@ -23,12 +27,36 @@ class Invoice(models.Model):
     total_with_vat = models.DecimalField('Znesek z DDV', max_digits=8, decimal_places=2, default=0, editable=False)
     payed = models.BooleanField('Plačano', default=False)
 
+    def generate_object_number(self, date, last_object):
+
+        if not last_object:
+            yr = str(date.year)
+            generated_number = '0001-' + yr
+
+        else:
+            generated_number = str(int(last_object.invoice_number[:4]) + 1) + last_object.invoice_number[4:]
+
+        return generated_number
+
+    def save(self, *args, **kwargs):
+        if self.invoice_number is None:
+            last_object = Invoice.objects.all().order_by('date').last()
+            self.invoice_number = self.generate_object_number(self.issued, last_object)
+
+        # gives a week to pay the offer
+        pay_in = timedelta(days=settings.PAYING_PERIOD)
+        due_date = self.issued + pay_in
+        self.due_date = due_date
+
+        super(Invoice, self).save(*args, **kwargs)
+
+
 
 class UserProfile(AbstractUser):
     company_name = models.CharField('Company name', max_length=40, blank=True, null=True)
-    address = models.CharField('Adress', max_length=50, blank=False, null=False)
-    post = models.PositiveIntegerField('Postal code')
-    city = models.CharField('City', max_length=40, blank=False, null=False)
+    address = models.CharField('Adress', max_length=50, blank=True, null=True)
+    post = models.PositiveIntegerField('Postal code', blank=True, null=True)
+    city = models.CharField('City', max_length=40, blank=True, null=True)
     state = models.CharField('State', max_length=40, blank=True, null=True)
     country = models.CharField('Country', max_length=40, blank=True, null=True)
     tax_payer_id = models.CharField('Tax payer id', max_length=40, blank=True, null=True)

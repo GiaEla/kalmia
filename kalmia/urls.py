@@ -16,6 +16,10 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
+from invoice.views import InvoiceApi, InvoiceListApi
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^invoice/(?P<invoice_id>\d+)/$', InvoiceApi.as_view()),
+    url(r'^invoice-list/$', InvoiceListApi.as_view()),
 ]
