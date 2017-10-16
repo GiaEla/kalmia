@@ -18,10 +18,22 @@ class InvoiceApi(APIView):
         return Response(invoice_serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        pass
+        serializer = InvoiceSerializer(data=request.data)
 
-    def put(self, request, format=None):
-        pass
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def put(self, request, invoice_id, format=None):
+
+        serializer = InvoiceSerializer(invoice_id, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data())
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class InvoiceListApi(APIView):
