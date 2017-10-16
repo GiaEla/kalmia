@@ -27,8 +27,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'invoice.UserProfile'
-
 # Application definition
 
 INSTALLED_APPS = [
