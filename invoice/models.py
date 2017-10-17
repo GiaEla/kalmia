@@ -4,6 +4,7 @@ from datetime import timedelta
 
 from django.conf import settings
 from django.contrib.auth.models import AbstractUser
+from django.contrib.postgres.fields import JSONField
 from django.db import models
 
 
@@ -11,10 +12,11 @@ class Vat(models.Model):
     name = models.CharField('Value added tax', max_length=40, blank=True, null=True)
     value = models.DecimalField('Vat value', max_digits=8, decimal_places=2, default=0, editable=False)
 
+
 class Service(models.Model):
     price_no_vat = models.DecimalField('Price without vat', max_digits=9, decimal_places=2, default=0)
-    vat = models.ForeignKey(Vat, blank=False, null=False, verbose_name='Value added tax')
-    quantity = models.PositiveIntegerField('Quantity')
+    vat = JSONField('Vat', default=None)
+    quantity = models.PositiveIntegerField('Quantity', default=0)
     currency = models.CharField('Currency', max_length=100)
 
 
@@ -37,10 +39,10 @@ class Invoice(models.Model):
     due_date = models.DateField('Due date', null=True, editable=False)
     service_date = models.DateTimeField('Service date')
     reference = models.CharField('Reference', max_length=100)
-    services = models.ManyToManyField(Service, through='ServicesQuantity', verbose_name='Services')
+    services = JSONField('Services', default=[])
     total_no_vat = models.DecimalField('Znesek brez DDV', max_digits=8, decimal_places=2, default=0, editable=False)
     total_with_vat = models.DecimalField('Znesek z DDV', max_digits=8, decimal_places=2, default=0, editable=False)
-    customer_fk = models.ForeignKey(Customer, verbose_name='Customer')
+    customer = JSONField('Customer', default=None)
     payed = models.BooleanField('Plačano', default=False)
 
     def generate_object_number(self, date, last_object):
@@ -66,9 +68,9 @@ class Invoice(models.Model):
         super(Invoice, self).save(*args, **kwargs)
 
 
-class ServicesQuantity(models.Model):
-    invoice = models.ForeignKey(Invoice, blank=False, null=False)
-    service = models.ForeignKey(Service, blank=False, null=False)
-    quantity = models.PositiveIntegerField(default=0)
+# class ServicesQuantity(models.Model):
+#     invoice = models.ForeignKey(Invoice, blank=False, null=False)
+#     service = models.ForeignKey(Service, blank=False, null=False)
+#     quantity = models.PositiveIntegerField(default=0)
 
 

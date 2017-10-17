@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from invoice.models import Invoice, Service, ServicesQuantity, Vat, Customer
+from invoice.models import Invoice, Service, Vat, Customer
 
 
 class VatSerializer(serializers.ModelSerializer):
@@ -9,28 +9,27 @@ class VatSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class InvoiceSerializer(serializers.ModelSerializer):
+class CostumerSerializer(serializers.ModelSerializer):
+    id = serializers.ModelField(model_field=Customer()._meta.get_field('id'))
+
     class Meta:
-        model = Invoice
+        model = Customer
         fields = '__all__'
-        depth = 2
 
 
 class ServiceSerializer(serializers.ModelSerializer):
+
+    id = serializers.ModelField(model_field=Service()._meta.get_field('id'))
+    vat = VatSerializer()
+
     class Meta:
         model = Service
         fields = '__all__'
         depth = 1
 
 
-class CostumerSerializer(serializers.ModelSerializer):
+class InvoiceSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Customer
+        model = Invoice
         fields = '__all__'
-
-
-class ServicesQuantitySerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ServicesQuantity
-        fields = '__all__'
-        depth = 3
+        depth = 1

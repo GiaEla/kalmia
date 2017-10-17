@@ -28,10 +28,12 @@ class InvoiceApi(APIView):
 
     def put(self, request, invoice_id, format=None):
 
-        serializer = InvoiceSerializer(invoice_id, data=request.data)
+        invoice = Invoice.objects.get(id=invoice_id)
+
+        serializer = InvoiceSerializer(invoice, data=request.data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data())
+            return Response('')
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
