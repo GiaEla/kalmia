@@ -3,8 +3,8 @@ from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from invoice.models import Invoice
-from invoice.serializers import InvoiceSerializer
+from invoice.models import Invoice, Customer, Service
+from invoice.serializers import InvoiceSerializer, CostumerSerializer, ServiceSerializer
 
 
 class InvoiceApi(APIView):
@@ -47,3 +47,25 @@ class InvoiceListApi(APIView):
         invoice_list_serializer = InvoiceSerializer(invoice_list, many=True)
 
         return Response(invoice_list_serializer.data, status=status.HTTP_200_OK)
+
+
+
+class CustomerListApi(APIView):
+
+    permissions_classes = (permissions.AllowAny,)
+
+    def get(self, request, format=None):
+        customer_list = Customer.objects.all()
+        customer_list_serializer = CostumerSerializer(customer_list, many=True)
+
+        return Response(customer_list_serializer.data, status=status.HTTP_200_OK)
+
+
+class ServiceListApi(APIView):
+    permissions_classes = (permissions.AllowAny,)
+
+    def get(self, request, format=None):
+        service_list = Service.objects.all()
+        service_list_serializer = ServiceSerializer(service_list, many=True)
+
+        return Response(service_list_serializer.data, status=status.HTTP_200_OK)
