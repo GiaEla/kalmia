@@ -6,3 +6,5 @@ admin.site.register(Invoice)
 admin.site.register(Customer)
 admin.site.register(Service)
 admin.site.register(Vat)
+
+

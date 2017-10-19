@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Offer</title>
+
+    <style>
+
+        table{
+            width: 100%;
+            text-align: left;
+            padding-bottom: 20px;
+        }
+
+        th, td{
+            border-bottom: 1px solid gray;
+        }
+
+        tr:first-child{
+            background-color: lightgray;
+        }
+
+        .right{
+            text-align: right;
+        }
+
+        .pay_det{
+            padding-top: 80px;
+        }
+
+    </style>
+
+</head>
+<body>
+    <div>
+        <th><strong> CLOUD ROCKS </strong></th>
+    </div>
+    <br>
+    <div>
+        <strong> Invoice num. {{ invoice_number }} </strong>
+        <b> Place: </b> {{ place }} <br>
+        <b> Ref. #: </b> {{ reference }} <br>
+        <b> Issued: </b> {{ issued }} <br>
+        <b> Due date: </b> {{ due_date }} <br>
+        <b> Service date: </b> {{ service_date }} <br>
+        <br>
+    </div>
+
+    <table>
+        <tr>
+            <th> Service </th>
+            <th> Price </th>
+            <th> % VAT </th>
+            <th> Total </th>
+
+        </tr>
+
+            {% for service in services %}
+            <tr>
+                <th> {{ service.name }} </th>
+                <th> {{ service.price_no_vat }} </th>
+                <th> {{ service.vat.name }} </th>
+                <th> {{ service.total }} </th>
+            </tr>tr
+            {% endfor %}
+    </table>
+
+
+    <div class = 'right'>
+        Total without VAT: {{ total_no_vat }} € <br>
+        <strong> Total: {{ total_with_vat }} € </strong>
+    </div>
+
+</body>

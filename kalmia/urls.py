@@ -16,7 +16,7 @@ Including another URLconf
 from django.conf.urls import url
 from django.contrib import admin
 
-from invoice.views import InvoiceApi, InvoiceListApi, CustomerListApi, ServiceListApi
+from invoice.views import InvoiceApi, InvoiceListApi, CustomerListApi, ServiceListApi, InvoiceToPdf
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -25,4 +25,5 @@ urlpatterns = [
     url(r'^invoice-list/$', InvoiceListApi.as_view()),
     url(r'^customer-list/$', CustomerListApi.as_view()),
     url(r'^service-list/$', ServiceListApi.as_view()),
+    url(r'^pdf-invoice/(?P<invoice_id>\d+)/$', InvoiceToPdf.as_view()),
 ]

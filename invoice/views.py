@@ -1,4 +1,6 @@
 # Create your views here.
+
+from django.http import HttpResponse
 from rest_framework import permissions, status
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -69,3 +71,17 @@ class ServiceListApi(APIView):
         service_list_serializer = ServiceSerializer(service_list, many=True)
 
         return Response(service_list_serializer.data, status=status.HTTP_200_OK)
+
+
+class InvoiceToPdf(APIView):
+    permission_classes = (permissions.AllowAny,)
+
+    def get(self, request, invoice_id, format=None):
+        one_invoice = Invoice.objects.get(id=invoice_id)
+        pdf_path = one_invoice.generate_pdf()
+
+        with open(pdf_path, 'rb') as file_obj:
+            resp = HttpResponse(file_obj, content_type="application/pdf")
+            resp['Content-Disposition'] = 'attachment; filename="invoice.pdf'
+
+        return resp
